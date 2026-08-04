@@ -34,7 +34,7 @@ function Navbar({ cartCount, user, logout }) {
           data-bs-toggle="collapse"
           data-bs-target="#mainNavbar"
         >
-          <span className="navbar-toggler-icon"></span>
+          <i className="bi bi-list text-white fs-2"></i>
         </button>
 
         <div className="collapse navbar-collapse" id="mainNavbar">
@@ -49,10 +49,10 @@ function Navbar({ cartCount, user, logout }) {
             </NavLink>
           </div>
 
-          <div className="d-flex align-items-center gap-2">
+          <div className="d-flex align-items-lg-center flex-column flex-lg-row gap-2 mt-3 mt-lg-0">
             {user ? (
               <>
-                <span className="text-light fw-semibold me-2">
+                <span className="text-light fw-semibold me-lg-2">
                   👋 Hi, {user.name}
                 </span>
 
