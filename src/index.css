@@ -656,3 +656,40 @@ select:focus {
     position: static;
   }
 }
+/* -----------------phone --------------------- */
+@media (max-width: 768px) {
+  /* Hero Section */
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .hero-text {
+    font-size: 1rem;
+  }
+
+  /* Features inside hero */
+  .hero-features {
+    grid-template-columns: 1fr;
+  }
+
+  /* Hide big hero icon on mobile */
+  .hero-icon {
+    display: none;
+  }
+
+  /* Product details image */
+  .product-detail-image {
+    height: 300px;
+  }
+
+  /* Cart */
+  .cart-image {
+    width: 70px;
+    height: 70px;
+  }
+
+  /* Checkout / Cards spacing */
+  .card-body {
+    padding: 1.2rem !important;
+  }
+}
