@@ -39,7 +39,7 @@ function Footer() {
         <div className="text-center text-white-50">
           © 2026 <strong>ShopEase</strong>. All Rights Reserved.
           <br />
-          <small>Built with React & Bootstrap ❤️</small>
+          <small>Thank you for shopping with us ❤️</small>
         </div>
       </div>
     </footer>

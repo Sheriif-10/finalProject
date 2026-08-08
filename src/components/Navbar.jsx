@@ -12,8 +12,8 @@ function Navbar({ cartCount, user, logout }) {
     >
       <div className="container">
         <Link
-          className="navbar-brand text-white d-flex align-items-center"
           to="/"
+          className="navbar-brand text-white d-flex align-items-center"
         >
           <div
             className="bg-warning rounded-circle d-flex justify-content-center align-items-center me-2"
@@ -42,7 +42,9 @@ function Navbar({ cartCount, user, logout }) {
             <NavLink
               to="/"
               className={({ isActive }) =>
-                `nav-link ${isActive ? "active text-warning" : "text-white"}`
+                isActive
+                  ? "nav-link active text-warning"
+                  : "nav-link text-white"
               }
             >
               Home
@@ -62,17 +64,38 @@ function Navbar({ cartCount, user, logout }) {
               </>
             ) : (
               <>
-                <Link className="btn btn-outline-light" to="/login">
+                <NavLink
+                  to="/login"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "btn btn-warning fw-semibold"
+                      : "btn btn-outline-light"
+                  }
+                >
                   Login
-                </Link>
+                </NavLink>
 
-                <Link className="btn btn-warning fw-semibold" to="/signup">
+                <NavLink
+                  to="/signup"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "btn btn-warning fw-semibold"
+                      : "btn btn-outline-light"
+                  }
+                >
                   Sign Up
-                </Link>
+                </NavLink>
               </>
             )}
 
-            <Link to="/cart" className="btn btn-dark position-relative">
+            <NavLink
+              to="/cart"
+              className={({ isActive }) =>
+                isActive
+                  ? "btn btn-warning fw-semibold position-relative"
+                  : "btn btn-dark position-relative"
+              }
+            >
               <i className="bi bi-cart3 me-2"></i>
               Cart
               {cartCount > 0 && (
@@ -80,7 +103,7 @@ function Navbar({ cartCount, user, logout }) {
                   {cartCount}
                 </span>
               )}
-            </Link>
+            </NavLink>
           </div>
         </div>
       </div>

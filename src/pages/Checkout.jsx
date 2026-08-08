@@ -12,6 +12,7 @@ function Checkout({ cart, setCart }) {
     address: "",
     phone: "",
   });
+  ذ;
 
   const subtotal = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,

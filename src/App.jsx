@@ -33,14 +33,15 @@ function App() {
       if (existingProduct) {
         toast.success("Product added to cart 🛒");
 
-        return currentCart.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item,
+        return currentCart.map(
+          (item) =>
+            item.id === product.id
+              ? { ...item, quantity: item.quantity + 1 }
+              : item /*Spread Operator*/,
         );
       }
 
-      toast.success(`${product.title} added to cart`);
+      // toast.success(`${product.title} added to cart`);
 
       return [...currentCart, { ...product, quantity: 1 }];
     });
