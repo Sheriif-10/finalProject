@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import productsData from "../data/products.json";
+import axios from "axios";
 import Footer from "../components/Footer";
 
 function ProductPage({ addToCart }) {
@@ -8,15 +8,21 @@ function ProductPage({ addToCart }) {
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
-    const selectedProduct = productsData.find((item) => item.id === Number(id));
-
-    setProduct(selectedProduct);
+    axios
+      .get(`https://fakestoreapi.com/products/${id}`)
+      .then((response) => {
+        setProduct(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+        setProduct(null);
+      });
   }, [id]);
 
   if (!product) {
     return (
-      <div className="container py-5">
-        <div className="alert alert-danger">Product not found.</div>
+      <div className="container py-5 text-center">
+        <h2 className="fw-bold mb-3">Product not found.</h2>
 
         <Link to="/" className="btn btn-dark">
           Back
@@ -28,10 +34,11 @@ function ProductPage({ addToCart }) {
   return (
     <>
       <div className="container py-5">
-        <Link to="/" className="btn btn-outline-secondary mb-5">
-          <i className="bi bi-arrow-left me-2"></i>
-          Back to Shopping
-        </Link>
+        <div className="mb-4">
+          <Link to="/" className="text-decoration-none">
+            ← Back to Shopping
+          </Link>
+        </div>
 
         <div className="row g-5 align-items-center">
           <div className="col-lg-6">
