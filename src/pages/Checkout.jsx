@@ -247,7 +247,6 @@ function Checkout({ cart, setCart }) {
           </div>
         </div>
       </div>
-
       <Footer />
     </>
   );

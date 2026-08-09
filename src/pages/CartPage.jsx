@@ -111,7 +111,6 @@ function CartPage({ cart, updateQuantity, removeFromCart }) {
               </div>
             ))}
           </div>
-
           <div className="col-lg-4">
             <div className="card border-0 shadow summary-card">
               <div className="card-body">
