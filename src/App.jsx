@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import ProductPage from "./pages/ProductPage";
@@ -33,15 +33,14 @@ function App() {
       if (existingProduct) {
         toast.success("Product added to cart 🛒");
 
-        return currentCart.map(
-          (item) =>
-            item.id === product.id
-              ? { ...item, quantity: item.quantity + 1 }
-              : item /*Spread Operator*/,
+        return currentCart.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item,
         );
       }
 
-      toast.success(`product added to cart`);
+      toast.success("Product added to cart");
 
       return [...currentCart, { ...product, quantity: 1 }];
     });
@@ -78,7 +77,7 @@ function App() {
 
   return (
     <>
-      <Navbar cartCount={cartCount} user={user} logout={logout} />
+      <Navbar user={user} logout={logout} cartCount={cartCount} />
 
       <main>
         <Routes>
@@ -102,7 +101,13 @@ function App() {
 
           <Route
             path="/checkout"
-            element={<Checkout cart={cart} setCart={setCart} />}
+            element={
+              user ? (
+                <Checkout cart={cart} setCart={setCart} />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
           />
 
           <Route path="/login" element={<Login onLogin={login} />} />
