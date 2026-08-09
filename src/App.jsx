@@ -41,7 +41,7 @@ function App() {
         );
       }
 
-      // toast.success(`${product.title} added to cart`);
+      toast.success(`product added to cart`);
 
       return [...currentCart, { ...product, quantity: 1 }];
     });

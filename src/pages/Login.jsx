@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { validateEmail } from "../utils/Auth";
 
 function Login({ onLogin }) {
   const navigate = useNavigate();
@@ -11,16 +12,36 @@ function Login({ onLogin }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!email || !password) {
-      setError("Please fill in all fields.");
+    const emailError = validateEmail(email);
+
+    if (emailError) {
+      setError(emailError);
+      return;
+    }
+
+    if (!password) {
+      setError("Please enter your password.");
+      return;
+    }
+
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+
+    const user = users.find(
+      (user) =>
+        user.email.toLowerCase() === email.trim().toLowerCase() &&
+        user.password === password,
+    );
+
+    if (!user) {
+      setError("Invalid email or password.");
       return;
     }
 
     setError("");
 
     onLogin({
-      name: email.split("@")[0],
-      email,
+      name: user.name,
+      email: user.email,
     });
 
     navigate("/");
@@ -35,8 +56,8 @@ function Login({ onLogin }) {
         className="card border-0 shadow-lg auth-card"
         style={{ borderRadius: "22px" }}
       >
-        <div className="card-body p-5">
-          <div className="text-center mb-4">
+        <div className="card-body p-4 p-md-5">
+          <div className="text-center">
             <div
               className="mx-auto d-flex justify-content-center align-items-center rounded-circle bg-warning"
               style={{
@@ -44,7 +65,7 @@ function Login({ onLogin }) {
                 height: "80px",
               }}
             >
-              <i className="bi bi-person-fill fs-2 text-dark"></i>
+              <i className="bi bi-box-arrow-in-right fs-1"></i>
             </div>
 
             <h2 className="fw-bold mt-4 mb-2">Welcome Back</h2>
@@ -68,7 +89,10 @@ function Login({ onLogin }) {
                   className="form-control"
                   placeholder="Enter your email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setError("");
+                  }}
                 />
               </div>
             </div>
@@ -86,12 +110,18 @@ function Login({ onLogin }) {
                   className="form-control"
                   placeholder="Enter your password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setError("");
+                  }}
                 />
               </div>
             </div>
 
-            <button className="btn btn-dark w-100 btn-lg fw-semibold">
+            <button
+              type="submit"
+              className="btn btn-dark w-100 btn-lg fw-semibold"
+            >
               <i className="bi bi-box-arrow-in-right me-2"></i>
               Login
             </button>

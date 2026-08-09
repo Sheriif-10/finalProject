@@ -2,6 +2,12 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Footer from "../components/Footer";
+import {
+  validateName,
+  validateEmail,
+  validatePhone,
+  validateAddress,
+} from "../utils/Auth";
 
 function Checkout({ cart, setCart }) {
   const navigate = useNavigate();
@@ -12,7 +18,8 @@ function Checkout({ cart, setCart }) {
     address: "",
     phone: "",
   });
-  ذ;
+
+  const [errors, setErrors] = useState({});
 
   const subtotal = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -28,13 +35,47 @@ function Checkout({ cart, setCart }) {
       ...form,
       [e.target.name]: e.target.value,
     });
+
+    setErrors({
+      ...errors,
+      [e.target.name]: "",
+    });
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    const nameError = validateName(form.name);
+    const emailError = validateEmail(form.email);
+    const addressError = validateAddress(form.address);
+    const phoneError = validatePhone(form.phone);
+
+    if (nameError) {
+      newErrors.name = nameError;
+    }
+
+    if (emailError) {
+      newErrors.email = emailError;
+    }
+
+    if (addressError) {
+      newErrors.address = addressError;
+    }
+
+    if (phoneError) {
+      newErrors.phone = phoneError;
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!form.name || !form.email || !form.address || !form.phone) {
-      toast.error("Please fill in all information.");
+    if (!validateForm()) {
+      toast.error("Please correct the information and try again.");
       return;
     }
 
@@ -48,12 +89,11 @@ function Checkout({ cart, setCart }) {
   return (
     <>
       <div className="container py-5">
-        <div className="mb-5">
-          <Link to="/cart" className="btn btn-outline-dark mb-4">
-            <i className="bi bi-arrow-left me-2"></i>
-            Back to Cart
-          </Link>
+        <Link to="/cart" className="text-decoration-none text-dark fw-semibold">
+          ← Back to Cart
+        </Link>
 
+        <div className="mt-4 mb-4">
           <span className="text-warning fw-bold d-block">
             SHOPEASE CHECKOUT
           </span>
@@ -78,11 +118,17 @@ function Checkout({ cart, setCart }) {
                     <input
                       type="text"
                       name="name"
-                      className="form-control"
+                      className={`form-control ${
+                        errors.name ? "is-invalid" : ""
+                      }`}
                       placeholder="Your name"
                       value={form.name}
                       onChange={handleChange}
                     />
+
+                    {errors.name && (
+                      <div className="invalid-feedback">{errors.name}</div>
+                    )}
                   </div>
 
                   <div className="mb-3">
@@ -91,11 +137,17 @@ function Checkout({ cart, setCart }) {
                     <input
                       type="email"
                       name="email"
-                      className="form-control"
+                      className={`form-control ${
+                        errors.email ? "is-invalid" : ""
+                      }`}
                       placeholder="example@email.com"
                       value={form.email}
                       onChange={handleChange}
                     />
+
+                    {errors.email && (
+                      <div className="invalid-feedback">{errors.email}</div>
+                    )}
                   </div>
 
                   <div className="mb-3">
@@ -104,11 +156,17 @@ function Checkout({ cart, setCart }) {
                     <input
                       type="text"
                       name="address"
-                      className="form-control"
+                      className={`form-control ${
+                        errors.address ? "is-invalid" : ""
+                      }`}
                       placeholder="Your address"
                       value={form.address}
                       onChange={handleChange}
                     />
+
+                    {errors.address && (
+                      <div className="invalid-feedback">{errors.address}</div>
+                    )}
                   </div>
 
                   <div className="mb-4">
@@ -117,14 +175,23 @@ function Checkout({ cart, setCart }) {
                     <input
                       type="text"
                       name="phone"
-                      className="form-control"
-                      placeholder="Your phone number"
+                      className={`form-control ${
+                        errors.phone ? "is-invalid" : ""
+                      }`}
+                      placeholder="01xxxxxxxxx"
                       value={form.phone}
                       onChange={handleChange}
                     />
+
+                    {errors.phone && (
+                      <div className="invalid-feedback">{errors.phone}</div>
+                    )}
                   </div>
 
-                  <button className="btn btn-warning w-100 py-3 fw-bold">
+                  <button
+                    type="submit"
+                    className="btn btn-warning w-100 py-3 fw-bold"
+                  >
                     <i className="bi bi-check-circle me-2"></i>
                     Confirm Order
                   </button>
@@ -163,6 +230,7 @@ function Checkout({ cart, setCart }) {
 
                 <div className="d-flex justify-content-between mb-3">
                   <span>Shipping</span>
+
                   <strong className="text-success">
                     ${shipping.toFixed(2)}
                   </strong>
@@ -172,7 +240,6 @@ function Checkout({ cart, setCart }) {
 
                 <div className="d-flex justify-content-between fs-5 fw-bold">
                   <span>Total</span>
-
                   <span>${total.toFixed(2)}</span>
                 </div>
               </div>

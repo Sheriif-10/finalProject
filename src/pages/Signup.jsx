@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { validateName, validateEmail, validatePassword } from "../utils/Auth";
 
 function Signup({ onLogin }) {
   const navigate = useNavigate();
@@ -11,33 +12,83 @@ function Signup({ onLogin }) {
     confirmPassword: "",
   });
 
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value,
     });
+
+    setErrors({
+      ...errors,
+      [e.target.name]: "",
+    });
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    const nameError = validateName(form.name);
+    const emailError = validateEmail(form.email);
+    const passwordError = validatePassword(form.password);
+
+    if (nameError) {
+      newErrors.name = nameError;
+    }
+
+    if (emailError) {
+      newErrors.email = emailError;
+    }
+
+    if (passwordError) {
+      newErrors.password = passwordError;
+    }
+
+    if (!form.confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password.";
+    } else if (form.password !== form.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match.";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!form.name || !form.email || !form.password || !form.confirmPassword) {
-      setError("Please fill in all fields.");
+    if (!validateForm()) {
       return;
     }
 
-    if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match.");
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+
+    const existingUser = users.find(
+      (user) => user.email.toLowerCase() === form.email.trim().toLowerCase(),
+    );
+
+    if (existingUser) {
+      setErrors({
+        email: "An account with this email already exists.",
+      });
       return;
     }
 
-    setError("");
+    const newUser = {
+      name: form.name.trim(),
+      email: form.email.trim(),
+      password: form.password,
+    };
+
+    users.push(newUser);
+
+    localStorage.setItem("users", JSON.stringify(users));
 
     onLogin({
-      name: form.name,
-      email: form.email,
+      name: newUser.name,
+      email: newUser.email,
     });
 
     navigate("/");
@@ -52,8 +103,8 @@ function Signup({ onLogin }) {
         className="card auth-card border-0 shadow-lg"
         style={{ borderRadius: "22px" }}
       >
-        <div className="card-body p-5">
-          <div className="text-center mb-4">
+        <div className="card-body p-4 p-md-5">
+          <div className="text-center">
             <div
               className="mx-auto d-flex justify-content-center align-items-center rounded-circle bg-warning"
               style={{
@@ -61,7 +112,7 @@ function Signup({ onLogin }) {
                 height: "80px",
               }}
             >
-              <i className="bi bi-person-plus-fill fs-2 text-dark"></i>
+              <i className="bi bi-person-plus-fill fs-1"></i>
             </div>
 
             <h2 className="fw-bold mt-4 mb-2">Create Account</h2>
@@ -70,8 +121,6 @@ function Signup({ onLogin }) {
               Join ShopEase and start shopping today.
             </p>
           </div>
-
-          {error && <div className="alert alert-danger">{error}</div>}
 
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
@@ -84,11 +133,15 @@ function Signup({ onLogin }) {
 
                 <input
                   name="name"
-                  className="form-control"
+                  className={`form-control ${errors.name ? "is-invalid" : ""}`}
                   placeholder="Enter your full name"
                   value={form.name}
                   onChange={handleChange}
                 />
+
+                {errors.name && (
+                  <div className="invalid-feedback">{errors.name}</div>
+                )}
               </div>
             </div>
 
@@ -103,11 +156,15 @@ function Signup({ onLogin }) {
                 <input
                   name="email"
                   type="email"
-                  className="form-control"
+                  className={`form-control ${errors.email ? "is-invalid" : ""}`}
                   placeholder="Enter your email"
                   value={form.email}
                   onChange={handleChange}
                 />
+
+                {errors.email && (
+                  <div className="invalid-feedback">{errors.email}</div>
+                )}
               </div>
             </div>
 
@@ -122,11 +179,17 @@ function Signup({ onLogin }) {
                 <input
                   name="password"
                   type="password"
-                  className="form-control"
+                  className={`form-control ${
+                    errors.password ? "is-invalid" : ""
+                  }`}
                   placeholder="Create a password"
                   value={form.password}
                   onChange={handleChange}
                 />
+
+                {errors.password && (
+                  <div className="invalid-feedback">{errors.password}</div>
+                )}
               </div>
             </div>
 
@@ -141,15 +204,26 @@ function Signup({ onLogin }) {
                 <input
                   name="confirmPassword"
                   type="password"
-                  className="form-control"
+                  className={`form-control ${
+                    errors.confirmPassword ? "is-invalid" : ""
+                  }`}
                   placeholder="Confirm your password"
                   value={form.confirmPassword}
                   onChange={handleChange}
                 />
+
+                {errors.confirmPassword && (
+                  <div className="invalid-feedback">
+                    {errors.confirmPassword}
+                  </div>
+                )}
               </div>
             </div>
 
-            <button className="btn btn-dark btn-lg w-100 fw-semibold">
+            <button
+              type="submit"
+              className="btn btn-dark btn-lg w-100 fw-semibold"
+            >
               <i className="bi bi-person-check-fill me-2"></i>
               Create Account
             </button>
